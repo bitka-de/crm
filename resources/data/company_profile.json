@@ -1,0 +1,33 @@
+{
+    "company_name": "Bitka Websolution",
+    "legal_form": "Einzelunternehmen",
+    "owner_name": "Jan Pascal Behrens",
+    "managing_director": "",
+    "street": "Karlstra\u00dfe 112",
+    "zip_code": "76137",
+    "city": "Karlsruhe",
+    "country": "Deutschland",
+    "email": "mail@bitka.de",
+    "phone": "+49 30 5551234",
+    "website": "https://bitka.de",
+    "vat_id": "",
+    "tax_number": "35050/00197",
+    "registration_number": "",
+    "registration_court": "",
+    "share_capital_eur": "",
+    "founded_on": "2024-01-15",
+    "extra_fields": {
+        "industry": {
+            "type": "number",
+            "value": "Softwareentwicklung"
+        },
+        "fiscal_year_start": {
+            "type": "text",
+            "value": "01.01"
+        },
+        "buchhaltung": {
+            "type": "text",
+            "value": "Einnahmen-Ueberschuss-Rechnung"
+        }
+    }
+}

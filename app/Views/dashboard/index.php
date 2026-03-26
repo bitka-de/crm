@@ -26,7 +26,14 @@ declare(strict_types=1);
             'title' => 'Berichte',
             'copy'  => 'Analysiere Aktivitaeten und exportiere Daten.',
         ]) ?>
+
+        <?= $this->component('panel', [
+            'title' => 'Unternehmensdaten',
+            'copy'  => 'Pflege Stammdaten wie Unternehmensname, Adresse und Steuernummer unter /company.',
+        ]) ?>
     </section>
+
+    <p><a href="/company" class="secondary-link">Zu den Unternehmensdaten</a></p>
 
     <form method="post" action="/logout" style="padding: 8px 0;">
         <button type="submit" class="logout-btn">Abmelden</button>

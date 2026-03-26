@@ -1,0 +1,13 @@
+[
+    {
+        "changed_at": "2026-03-26T12:49:26+00:00",
+        "changed_by": "admin",
+        "changes": [
+            {
+                "field": "Unternehmensname",
+                "from": "Bitka Websolutions",
+                "to": "Bitka Websolution"
+            }
+        ]
+    }
+]

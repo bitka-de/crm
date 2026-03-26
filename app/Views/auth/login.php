@@ -10,7 +10,7 @@ declare(strict_types=1);
     ]) ?>
 
     <?php if (!empty($error)): ?>
-        <div class="auth-error">
+        <div class="auth-error flash-message" data-flash-message role="alert" aria-live="assertive">
             <?= $this->escape((string) $error) ?>
         </div>
     <?php endif; ?>

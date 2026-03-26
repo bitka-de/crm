@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\AuthController;
+use App\Controllers\CompanyController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
 use App\Core\Router;
@@ -23,5 +24,7 @@ $router->post('/logout', [AuthController::class, 'logout']);
 // Geschuetzte Routen
 $router->get('/', [HomeController::class, 'index'], [AuthMiddleware::class]);
 $router->get('/dashboard', [DashboardController::class, 'index'], [AuthMiddleware::class]);
+$router->get('/company', [CompanyController::class, 'index'], [AuthMiddleware::class]);
+$router->post('/company', [CompanyController::class, 'update'], [AuthMiddleware::class]);
 
 return $router;

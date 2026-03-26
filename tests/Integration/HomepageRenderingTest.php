@@ -8,6 +8,20 @@ use PHPUnit\Framework\TestCase;
 
 final class HomepageRenderingTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        // Nutzer einloggen, damit AuthMiddleware passiert wird
+        $_SESSION['auth_user'] = 'admin';
+    }
+
+    protected function tearDown(): void
+    {
+        $_SESSION = [];
+    }
+
     public function testHomepageRendersLayoutAndComponents(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';

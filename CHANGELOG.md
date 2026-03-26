@@ -14,6 +14,27 @@ Alle relevanten Aenderungen an diesem Projekt werden hier dokumentiert.
 
 ### Security
 
+---
+
+## Version 2 - 2026-03-26
+
+### Added
+- Auth-System mit Musterkonto admin / 1234
+- Session-Klasse fuer serverseitige Sitzungsverwaltung
+- Auth-Klasse mit attempt(), check(), user(), logout() (Passwoerter mit password_hash/password_verify)
+- MiddlewareInterface als Vertrag fuer alle Middlewares
+- AuthMiddleware leitet nicht eingeloggte Nutzer auf /login um
+- AuthController mit showLogin(), login() und logout()
+- Login-View mit Hero-Komponente, Fehleranzeige und Formular
+- Middleware-Unterstuetzung im Router: get/post/addRoute akzeptieren optionales Middleware-Array
+- Login-Routen GET /login, POST /login, POST /logout im Bootstrap
+- Formular-CSS in resources/css/app.css
+
+### Changed
+- Startseite / ist jetzt durch AuthMiddleware geschuetzt
+- Bootstrap startet Session und registriert Auth-Routen
+- HomepageRenderingTest authentifiziert Testnutzer in setUp
+
 ### Planned
 - Dynamische Routenparameter (z. B. /kunden/{id})
 - Middleware-Unterstuetzung

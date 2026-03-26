@@ -7,26 +7,32 @@ namespace App\Core;
 final class Router
 {
     /**
-     * @var array<string, array<string, callable|array{0: class-string, 1: string}>>
+     * @var array<string, array<string, array{handler: callable|array{0: class-string, 1: string}, middleware: list<class-string>}>>
      */
     private array $routes = [];
 
-    public function get(string $path, callable|array $handler): void
+    /** @param list<class-string> $middleware */
+    public function get(string $path, callable|array $handler, array $middleware = []): void
     {
-        $this->addRoute('GET', $path, $handler);
+        $this->addRoute('GET', $path, $handler, $middleware);
     }
 
-    public function post(string $path, callable|array $handler): void
+    /** @param list<class-string> $middleware */
+    public function post(string $path, callable|array $handler, array $middleware = []): void
     {
-        $this->addRoute('POST', $path, $handler);
+        $this->addRoute('POST', $path, $handler, $middleware);
     }
 
-    public function addRoute(string $method, string $path, callable|array $handler): void
+    /** @param list<class-string> $middleware */
+    public function addRoute(string $method, string $path, callable|array $handler, array $middleware = []): void
     {
         $normalizedMethod = strtoupper($method);
         $normalizedPath = $this->normalizePath($path);
 
-        $this->routes[$normalizedMethod][$normalizedPath] = $handler;
+        $this->routes[$normalizedMethod][$normalizedPath] = [
+            'handler'    => $handler,
+            'middleware' => $middleware,
+        ];
     }
 
     public function dispatch(string $method, string $uri): void
@@ -34,17 +40,29 @@ final class Router
         $normalizedMethod = strtoupper($method);
         $normalizedPath = $this->normalizePath((string) parse_url($uri, PHP_URL_PATH));
 
-        $handler = $this->routes[$normalizedMethod][$normalizedPath] ?? null;
+        $route = $this->routes[$normalizedMethod][$normalizedPath] ?? null;
 
-        if ($handler === null) {
+        if ($route === null) {
             http_response_code(404);
             echo '404 Not Found';
 
             return;
         }
 
+        foreach ($route['middleware'] as $middlewareClass) {
+            /** @var \App\Core\MiddlewareInterface $middleware */
+            $middleware = new $middlewareClass();
+            $result = $middleware->handle();
+
+            if ($result !== null) {
+                echo $result;
+
+                return;
+            }
+        }
+
         try {
-            $response = $this->resolveHandler($handler)();
+            $response = $this->resolveHandler($route['handler'])();
         } catch (\RuntimeException) {
             http_response_code(500);
             echo '500 Internal Server Error';

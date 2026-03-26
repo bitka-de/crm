@@ -131,6 +131,84 @@ body {
     }
 }
 
+/* --- Auth / Forms --- */
+
+.auth-error {
+    padding: 14px 20px;
+    background: #fee2e2;
+    border-radius: 14px;
+    color: #991b1b;
+    font-size: 0.95rem;
+}
+
+.auth-form {
+    display: grid;
+    gap: 18px;
+    max-width: 400px;
+}
+
+.form-field {
+    display: grid;
+    gap: 6px;
+}
+
+.form-field label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.form-field input {
+    padding: 12px 14px;
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--text-main);
+    transition: border-color 160ms;
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.auth-form button[type="submit"] {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 160ms;
+}
+
+.auth-form button[type="submit"]:hover {
+    opacity: 0.88;
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 160ms, color 160ms;
+}
+
+.logout-btn:hover {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fca5a5;
+}
+
+/* --- Responsive --- */
+
 @media (max-width: 640px) {
     .page-shell {
         margin: 18px auto;

@@ -1,0 +1,17 @@
+# Dependencies
+/vendor/
+
+# Build output
+/public/assets/
+
+# OS / Editor
+.DS_Store
+.vscode/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example

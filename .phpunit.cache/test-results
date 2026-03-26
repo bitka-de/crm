@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"Tests\\Unit\\HomePageTest::testReturnsGivenValues":0.001,"Tests\\Unit\\RouterTest::testDispatchesClosureRoute":0,"Tests\\Unit\\RouterTest::testDispatchesControllerRoute":0,"Tests\\Unit\\RouterTest::testReturns404ForUnknownRoute":0,"Tests\\Integration\\HomepageRenderingTest::testHomepageRendersLayoutAndComponents":0.001}}

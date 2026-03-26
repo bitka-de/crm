@@ -132,6 +132,39 @@ Oder:
 composer build
 ```
 
+## Testumgebung
+
+Das Projekt nutzt PHPUnit fuer Unit- und Integrationstests.
+
+Teststruktur:
+
+- tests/Unit
+- tests/Integration
+- phpunit.xml
+
+Tests ausfuehren:
+
+```bash
+composer test
+```
+
+Kompletten Testlauf ausfuehren:
+
+```bash
+composer test:all
+```
+
+Direkt mit PHPUnit:
+
+```bash
+vendor/bin/phpunit --configuration phpunit.xml
+```
+
+## Versionslog
+
+- Changelog: CHANGELOG.md
+- Einfacher Ablauf fuer Releases: VERSIONING.md
+
 ## Was das System kann
 
 - einfache GET/POST-Routen

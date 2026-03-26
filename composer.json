@@ -6,7 +6,9 @@
         }
     },
     "scripts": {
-        "build": "php build.php build"
+        "build": "php build.php build",
+        "test": "phpunit --configuration phpunit.xml",
+        "test:all": "@test"
     },
     "authors": [
         {
@@ -14,5 +16,7 @@
             "email": "behrens.ka@icloud.com"
         }
     ],
-    "require": {}
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    }
 }

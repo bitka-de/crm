@@ -46,6 +46,11 @@ final class CompanyPageRenderingTest extends TestCase
         self::assertStringContainsString('GmbH', $output);
         self::assertStringContainsString('name="managing_director"', $output);
         self::assertStringContainsString('name="share_capital_eur"', $output);
+        self::assertStringContainsString('name="bank_name"', $output);
+        self::assertStringContainsString('name="account_holder"', $output);
+        self::assertStringContainsString('name="iban"', $output);
+        self::assertStringContainsString('name="bic"', $output);
+        self::assertStringContainsString('Bankdaten', $output);
         self::assertStringContainsString('name="extra_field_key[]"', $output);
         self::assertStringContainsString('name="extra_field_value[]"', $output);
         self::assertStringContainsString('name="extra_field_type[]"', $output);

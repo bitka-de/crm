@@ -57,6 +57,13 @@ $contactItems = [
     'Webseite' => (string) ($profile['website'] ?? ''),
 ];
 
+$bankItems = [
+    'Bankname' => (string) ($profile['bank_name'] ?? ''),
+    'Kontoinhaber' => (string) ($profile['account_holder'] ?? ''),
+    'IBAN' => (string) ($profile['iban'] ?? ''),
+    'BIC' => (string) ($profile['bic'] ?? ''),
+];
+
 $complianceItems = [
     'USt-IdNr.' => (string) ($profile['vat_id'] ?? ''),
     'Steuernummer' => (string) ($profile['tax_number'] ?? ''),
@@ -109,6 +116,9 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
                 <?php if ((string) ($profile['registration_number'] ?? '') !== ''): ?>
                     <span class="company-badge">Registerdaten vorhanden</span>
                 <?php endif; ?>
+                <?php if ((string) ($profile['iban'] ?? '') !== ''): ?>
+                    <span class="company-badge">Bankdaten gepflegt</span>
+                <?php endif; ?>
             </div>
         </section>
 
@@ -152,6 +162,22 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
                 </header>
                 <div class="company-profile-grid">
                     <?php foreach ($complianceItems as $label => $value): ?>
+                        <?php if ($value === '') { continue; } ?>
+                        <article class="company-profile-item">
+                            <h4><?= $this->escape($label) ?></h4>
+                            <p><?= $this->escape($value) ?></p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+
+            <section class="company-section-card">
+                <header>
+                    <h3>Bankdaten</h3>
+                    <p>Zahlungsrelevante Kontoinformationen</p>
+                </header>
+                <div class="company-profile-grid">
+                    <?php foreach ($bankItems as $label => $value): ?>
                         <?php if ($value === '') { continue; } ?>
                         <article class="company-profile-item">
                             <h4><?= $this->escape($label) ?></h4>
@@ -283,6 +309,10 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
             <div class="form-field" data-role="email"><label for="email">E-Mail</label><input id="email" name="email" type="email" value="<?= $this->escape((string) ($profile['email'] ?? '')) ?>"></div>
             <div class="form-field" data-role="phone"><label for="phone">Telefon</label><input id="phone" name="phone" value="<?= $this->escape((string) ($profile['phone'] ?? '')) ?>"></div>
             <div class="form-field" data-role="website"><label for="website">Webseite</label><input id="website" name="website" value="<?= $this->escape((string) ($profile['website'] ?? '')) ?>"></div>
+            <div class="form-field" data-role="bank_name"><label for="bank_name">Bankname</label><input id="bank_name" name="bank_name" value="<?= $this->escape((string) ($profile['bank_name'] ?? '')) ?>"></div>
+            <div class="form-field" data-role="account_holder"><label for="account_holder">Kontoinhaber</label><input id="account_holder" name="account_holder" value="<?= $this->escape((string) ($profile['account_holder'] ?? '')) ?>"></div>
+            <div class="form-field" data-role="iban"><label for="iban">IBAN</label><input id="iban" name="iban" value="<?= $this->escape((string) ($profile['iban'] ?? '')) ?>"></div>
+            <div class="form-field" data-role="bic"><label for="bic">BIC</label><input id="bic" name="bic" value="<?= $this->escape((string) ($profile['bic'] ?? '')) ?>"></div>
             <div class="form-field" data-role="vat_id"><label for="vat_id">USt-IdNr.</label><input id="vat_id" name="vat_id" value="<?= $this->escape((string) ($profile['vat_id'] ?? '')) ?>"></div>
             <div class="form-field" data-role="tax_number"><label for="tax_number">Steuernummer</label><input id="tax_number" name="tax_number" value="<?= $this->escape((string) ($profile['tax_number'] ?? '')) ?>"></div>
             <div class="form-field" data-role="registration_number"><label for="registration_number">Handelsregisternummer</label><input id="registration_number" name="registration_number" value="<?= $this->escape((string) ($profile['registration_number'] ?? '')) ?>"></div>

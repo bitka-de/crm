@@ -1,0 +1,18 @@
+[
+    {
+        "id": "d10cbdc88f9ba903",
+        "first_name": "Maike",
+        "last_name": "Kropff",
+        "email": "maike.kropff-personaltraining@outlook.de",
+        "phone": "0160-98755921",
+        "company": "",
+        "position": "",
+        "status": "Kunde",
+        "extra_fields": {
+            "Webseite": {
+                "type": "text",
+                "value": "https://fitmitmaike.de"
+            }
+        }
+    }
+]

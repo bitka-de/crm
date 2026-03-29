@@ -1,0 +1,17 @@
+[ 
+    {
+        "company_name": "Musterfirma GmbH",
+        "legal_form": "GmbH",
+        "street": "Musterstrasse 10",
+        "zip_code": "20095",
+        "city": "Hamburg",
+        "country": "Deutschland",
+        "email": "info@musterfirma.de",
+        "phone": "+49 40 123456-0",
+        "website": "https://musterfirma.de",
+        "vat_id": "DE123456789",
+        "tax_number": "12/345/67890",
+        "registration_number": "HRB 123456",
+        "registration_court": "Amtsgericht Hamburg"
+    }
+]

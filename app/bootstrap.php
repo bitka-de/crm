@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\AuthController;
+use App\Controllers\ContactsController;
 use App\Controllers\CompanyController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
@@ -26,5 +27,16 @@ $router->get('/', [HomeController::class, 'index'], [AuthMiddleware::class]);
 $router->get('/dashboard', [DashboardController::class, 'index'], [AuthMiddleware::class]);
 $router->get('/company', [CompanyController::class, 'index'], [AuthMiddleware::class]);
 $router->post('/company', [CompanyController::class, 'update'], [AuthMiddleware::class]);
+$router->get('/contacts', [ContactsController::class, 'index'], [AuthMiddleware::class]);
+$router->get('/contacts/show', [ContactsController::class, 'showContact'], [AuthMiddleware::class]);
+$router->get('/contacts/companies/show', [ContactsController::class, 'showCompany'], [AuthMiddleware::class]);
+$router->post('/contacts', [ContactsController::class, 'save'], [AuthMiddleware::class]);
+$router->post('/contacts/delete', [ContactsController::class, 'delete'], [AuthMiddleware::class]);
+$router->post('/contacts/statuses', [ContactsController::class, 'saveStatuses'], [AuthMiddleware::class]);
+$router->post('/contacts/statuses/add', [ContactsController::class, 'addStatus'], [AuthMiddleware::class]);
+$router->post('/contacts/statuses/delete', [ContactsController::class, 'deleteStatus'], [AuthMiddleware::class]);
+$router->post('/contacts/companies', [ContactsController::class, 'saveCompanies'], [AuthMiddleware::class]);
+$router->post('/contacts/companies/save', [ContactsController::class, 'saveCompany'], [AuthMiddleware::class]);
+$router->post('/contacts/companies/delete', [ContactsController::class, 'deleteCompany'], [AuthMiddleware::class]);
 
 return $router;

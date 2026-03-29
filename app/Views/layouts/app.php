@@ -13,6 +13,7 @@ $currentPath = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH
 $navItems = [
     ['label' => 'Dashboard', 'href' => '/dashboard'],
     ['label' => 'Company', 'href' => '/company'],
+    ['label' => 'Kontakte', 'href' => '/contacts'],
 ];
 ?>
 <!DOCTYPE html>
@@ -26,49 +27,39 @@ $navItems = [
 </head>
 <body>
 <?php if ($isLoggedIn): ?>
-    <div class="clean-system-root">
-        <div class="clean-system-layout">
-            <aside class="clean-sidebar">
-                <div class="clean-sidebar-head">
-                    <p class="page-brand">CRM</p>
-                    <p class="system-brand-subline">Core System</p>
-                </div>
+    <div class="app-root">
+        <nav class="app-topnav" aria-label="Hauptnavigation">
+            <a href="/dashboard" class="app-topnav-brand" aria-label="Dashboard">
+                <span class="app-topnav-logo">CRM</span>
+                <p class="app-topnav-name">Mein Unternehmen</p>
+            </a>
 
-                <nav class="clean-sidebar-nav" aria-label="Hauptnavigation">
-                    <?php foreach ($navItems as $item): ?>
-                        <a
-                            href="<?= $this->escape($item['href']) ?>"
-                            class="clean-sidebar-link <?= $currentPath === $item['href'] ? 'is-active' : '' ?>"
-                        >
-                            <?= $this->escape($item['label']) ?>
-                        </a>
-                    <?php endforeach; ?>
-                </nav>
+            <div class="app-topnav-links">
+                <?php foreach ($navItems as $item): ?>
+                    <a
+                        href="<?= $this->escape($item['href']) ?>"
+                        class="app-topnav-link <?= $currentPath === $item['href'] ? 'is-active' : '' ?>"
+                    >
+                        <?= $this->escape($item['label']) ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
 
-                <div class="clean-sidebar-foot">
-                    <p class="clean-user"><?= $this->escape((string) (Auth::user() ?? 'User')) ?></p>
-                    <form method="post" action="/logout">
-                        <button type="submit" class="logout-btn">Log out</button>
-                    </form>
-                </div>
-            </aside>
+            <div class="app-topnav-right">
+                <span class="app-topnav-user"><?= $this->escape((string) (Auth::user() ?? 'User')) ?></span>
+                <form method="post" action="/logout">
+                    <button type="submit" class="logout-btn">Log out</button>
+                </form>
+            </div>
+        </nav>
 
-            <main class="page-content clean-main">
-                <?= $content ?>
-            </main>
-        </div>
+        <main class="app-main page-content">
+            <?= $content ?>
+        </main>
     </div>
 <?php else: ?>
-    <div class="clean-guest-root">
-        <header class="page-nav system-topbar">
-            <div class="system-brand-block">
-                <p class="page-brand">CRM System</p>
-                <p class="system-brand-subline">Schrittweise erweiterbare Plattform</p>
-            </div>
-            <span class="page-badge">PHP MVC</span>
-        </header>
-
-        <main class="page-content">
+    <div class="guest-root">
+        <main class="guest-card">
             <?= $content ?>
         </main>
     </div>

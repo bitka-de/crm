@@ -18,6 +18,11 @@ final class DashboardController
                 'hint' => 'Stammdaten und Rechtsform pflegen',
             ],
             [
+                'label' => 'Kontakte',
+                'href' => '/contacts',
+                'hint' => 'Kontakte und Status verwalten',
+            ],
+            [
                 'label' => 'Startseite',
                 'href' => '/',
                 'hint' => 'Zur Gesamtuebersicht wechseln',
@@ -28,7 +33,7 @@ final class DashboardController
             [
                 'name' => 'Kontaktmanagement',
                 'status' => 'Bereit',
-                'description' => 'Kunden, Ansprechpartner und Kommunikationshistorie zentral fuehren.',
+                'description' => 'Kontakte erfassen, mit Zusatzfeldern erweitern und Statuslisten flexibel verwalten.',
             ],
             [
                 'name' => 'Aufgabensteuerung',
@@ -48,8 +53,8 @@ final class DashboardController
         ];
 
         $kpis = [
-            ['label' => 'Aktive Module', 'value' => '4'],
-            ['label' => 'Erweiterbare Bereiche', 'value' => '3'],
+            ['label' => 'Aktive Module', 'value' => '5'],
+            ['label' => 'Erweiterbare Bereiche', 'value' => '4'],
             ['label' => 'Architektur', 'value' => 'MVC'],
         ];
 

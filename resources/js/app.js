@@ -205,3 +205,207 @@ if (kvModule) {
 		});
 	}
 }
+
+const contactsShell = document.querySelector('[data-contacts-shell]');
+
+if (contactsShell) {
+	const contactPanels = contactsShell.querySelectorAll('[data-contacts-tab-panel]');
+	const tabButtons = contactsShell.querySelectorAll('[data-contacts-switch]');
+	const initialTabRaw = contactsShell.getAttribute('data-initial-tab');
+	const initialTab = initialTabRaw === 'statuses' || initialTabRaw === 'companies' ? initialTabRaw : 'contacts';
+
+	const setContactsTab = (tab) => {
+		const safeTab = tab === 'statuses' || tab === 'companies' ? tab : 'contacts';
+
+		contactPanels.forEach((panel) => {
+			panel.classList.toggle('is-hidden', panel.getAttribute('data-contacts-tab-panel') !== safeTab);
+		});
+
+		tabButtons.forEach((button) => {
+			button.classList.toggle('is-active', button.getAttribute('data-contacts-switch') === safeTab);
+		});
+	};
+
+	tabButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			setContactsTab(button.getAttribute('data-contacts-switch') || 'contacts');
+		});
+	});
+
+	setContactsTab(initialTab);
+}
+
+const makeDialogController = (dialogSelector, openSelector, closeSelector, autoOpenAttr) => {
+	const dialog = document.querySelector(dialogSelector);
+	if (!dialog) return;
+
+	const openDialog = () => {
+		if (typeof dialog.showModal === 'function') {
+			dialog.showModal();
+		} else {
+			dialog.setAttribute('open', 'open');
+		}
+	};
+
+	const closeDialog = () => {
+		if (typeof dialog.close === 'function') {
+			dialog.close();
+		} else {
+			dialog.removeAttribute('open');
+		}
+	};
+
+	document.querySelectorAll(openSelector).forEach((btn) => btn.addEventListener('click', openDialog));
+	document.querySelectorAll(closeSelector).forEach((btn) => btn.addEventListener('click', closeDialog));
+
+	dialog.addEventListener('click', (event) => {
+		const bounds = dialog.getBoundingClientRect();
+		const outside = event.clientX < bounds.left
+			|| event.clientX > bounds.right
+			|| event.clientY < bounds.top
+			|| event.clientY > bounds.bottom;
+		if (outside) closeDialog();
+	});
+
+	if (autoOpenAttr && dialog.getAttribute(autoOpenAttr) === '1') {
+		openDialog();
+	}
+};
+
+makeDialogController('[data-status-dialog]', '[data-open-status-dialog]', '[data-close-status-dialog]', null);
+makeDialogController('[data-company-dialog]', '[data-open-company-dialog]', '[data-close-company-dialog]', 'data-company-dialog-auto-open');
+
+// Legal-form-aware field visibility for the company dialog
+const cdfDialog = document.querySelector('[data-company-dialog]');
+const cdfLfSelect = cdfDialog ? cdfDialog.querySelector('[data-company-dialog-legal-form]') : null;
+
+if (cdfDialog && cdfLfSelect) {
+	const setCdfVisible = (role, visible) => {
+		cdfDialog.querySelectorAll(`[data-cdf-role="${role}"]`).forEach((el) => {
+			el.classList.toggle('is-hidden', !visible);
+		});
+	};
+	const setCdfLabel = (attr, text) => {
+		const el = cdfDialog.querySelector(`[data-cdf-label="${attr}"]`);
+		if (el) el.textContent = text;
+	};
+	const applyCdfLegalForm = () => {
+		const lf = cdfLfSelect.value;
+		const helpEl = cdfDialog.querySelector('[data-cdf-lf-help]');
+		// reset to show-all defaults
+		setCdfVisible('owner_name', true);
+		setCdfVisible('managing_director', true);
+		setCdfVisible('registration_number', true);
+		setCdfVisible('registration_court', true);
+		setCdfVisible('share_capital_eur', true);
+		setCdfLabel('owner_name', 'Inhaber / Gesellschafter');
+		setCdfLabel('managing_director', 'Geschäftsführer');
+		if (helpEl) helpEl.textContent = '';
+		if (lf === 'Freelancer') {
+			setCdfVisible('managing_director', false);
+			setCdfVisible('registration_number', false);
+			setCdfVisible('registration_court', false);
+			setCdfVisible('share_capital_eur', false);
+			setCdfLabel('owner_name', 'Name (freiberuflich)');
+			if (helpEl) helpEl.textContent = 'Kein Handelsregistereintrag oder Stammkapital erforderlich.';
+			return;
+		}
+		if (lf === 'Einzelunternehmen') {
+			setCdfVisible('managing_director', false);
+			setCdfVisible('share_capital_eur', false);
+			setCdfLabel('owner_name', 'Inhaber');
+			if (helpEl) helpEl.textContent = 'Stammkapital nicht erforderlich.';
+			return;
+		}
+		if (lf === 'GbR') {
+			setCdfVisible('managing_director', false);
+			setCdfVisible('share_capital_eur', false);
+			setCdfLabel('owner_name', 'Gesellschafter');
+			if (helpEl) helpEl.textContent = 'Stammkapital nicht erforderlich.';
+			return;
+		}
+		if (lf === 'UG (haftungsbeschraenkt)') {
+			setCdfVisible('owner_name', false);
+			if (helpEl) helpEl.textContent = 'Handelsregisterdaten und Stammkapital sind relevant.';
+			return;
+		}
+		if (lf === 'GmbH') {
+			setCdfVisible('owner_name', false);
+			if (helpEl) helpEl.textContent = 'Handelsregisterdaten und Stammkapital sind relevant.';
+			return;
+		}
+	};
+	cdfLfSelect.addEventListener('change', applyCdfLegalForm);
+	applyCdfLegalForm();
+
+	// KV module for company extra fields
+	const cdfKvRows = cdfDialog.querySelector('[data-cdf-kv-rows]');
+	const cdfKvAdd = cdfDialog.querySelector('[data-cdf-kv-add]');
+	const makeCompanyKvRow = () => {
+		const row = document.createElement('div');
+		row.className = 'kv-row';
+		row.setAttribute('data-cdf-kv-row', '');
+		row.innerHTML = `
+			<input type="text" name="extra_field_key[]" placeholder="key (z. B. iban)">
+			<input type="text" name="extra_field_value[]" placeholder="value">
+			<select name="extra_field_type[]">
+				<option value="text">text</option>
+				<option value="number">number</option>
+				<option value="boolean">boolean</option>
+				<option value="date">date</option>
+			</select>
+			<button type="button" class="kv-remove" data-cdf-kv-remove>Entfernen</button>
+		`;
+		return row;
+	};
+	if (cdfKvRows && cdfKvAdd) {
+		cdfKvRows.addEventListener('click', (e) => {
+			if (e.target.closest('[data-cdf-kv-remove]')) {
+				const row = e.target.closest('[data-cdf-kv-row]');
+				if (row && cdfKvRows.querySelectorAll('[data-cdf-kv-row]').length > 1) {
+					row.remove();
+				} else if (row) {
+					row.querySelectorAll('input').forEach((i) => (i.value = ''));
+				}
+			}
+		});
+		cdfKvAdd.addEventListener('click', () => {
+			cdfKvRows.appendChild(makeCompanyKvRow());
+		});
+	}
+}
+
+const contactSearchInput = document.querySelector('[data-contact-search]');
+const contactSearchEntries = document.querySelectorAll('[data-contact-entry]');
+const contactSearchMeta = document.querySelector('[data-contact-search-meta]');
+const contactSearchEmpty = document.querySelector('[data-contact-search-empty]');
+
+if (contactSearchInput && contactSearchEntries.length > 0) {
+	const applyContactSearch = () => {
+		const query = contactSearchInput.value.trim().toLowerCase();
+		let visibleCount = 0;
+
+		contactSearchEntries.forEach((entry) => {
+			const haystack = (entry.getAttribute('data-search-text') || '').toLowerCase();
+			const match = query === '' || haystack.includes(query);
+
+			entry.classList.toggle('is-hidden', !match);
+			if (match) {
+				visibleCount += 1;
+			}
+		});
+
+		if (contactSearchMeta) {
+			contactSearchMeta.textContent = `${visibleCount} von ${contactSearchEntries.length} sichtbar`;
+		}
+
+		if (contactSearchEmpty) {
+			contactSearchEmpty.classList.toggle('is-hidden', visibleCount > 0);
+		}
+	};
+
+	contactSearchInput.addEventListener('input', applyContactSearch);
+	applyContactSearch();
+}
+
+makeDialogController('[data-contact-dialog]', '[data-open-contact-dialog]', '[data-close-contact-dialog]', 'data-contact-dialog-auto-open');

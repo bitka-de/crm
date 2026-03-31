@@ -9,7 +9,7 @@ declare(strict_types=1);
 /** @var list<string> $companyNames */
 /** @var string $selectedCompany */
 /** @var array<string, mixed>|null $editingContact */
-/** @var array<string, string>|null $editingCompany */
+/** @var array<string, mixed>|null $editingCompany */
 /** @var string $activeTab */
 /** @var string|null $success */
 /** @var string|null $error */
@@ -18,8 +18,12 @@ $activeTab = in_array($activeTab, ['contacts', 'statuses', 'companies'], true) ?
 $editingContact = is_array($editingContact ?? null) ? $editingContact : null;
 $editingCompany = is_array($editingCompany ?? null) ? $editingCompany : null;
 
+$editingCompanyExtraFields = is_array($editingCompany['extra_fields'] ?? null)
+    ? $editingCompany['extra_fields']
+    : [];
+
 $editingCompanyExtraFieldRows = [];
-foreach (($editingCompany['extra_fields'] ?? []) as $key => $field) {
+foreach ($editingCompanyExtraFields as $key => $field) {
     if (is_array($field) && isset($field['type'], $field['value'])) {
         $editingCompanyExtraFieldRows[] = ['key' => (string) $key, 'type' => (string) $field['type'], 'value' => (string) $field['value']];
         continue;
@@ -36,6 +40,10 @@ $baseContact = [
     'last_name' => '',
     'email' => '',
     'phone' => '',
+    'street' => '',
+    'zip_code' => '',
+    'city' => '',
+    'country' => 'Deutschland',
     'company' => $companyNames[0] ?? '',
     'position' => '',
     'status' => $statuses[0] ?? 'Kontakt',
@@ -139,10 +147,20 @@ if ($extraFieldRows === []) {
                                 $fullName,
                                 (string) ($contact['email'] ?? ''),
                                 (string) ($contact['phone'] ?? ''),
+                                (string) ($contact['street'] ?? ''),
+                                (string) ($contact['zip_code'] ?? ''),
+                                (string) ($contact['city'] ?? ''),
+                                (string) ($contact['country'] ?? ''),
                                 (string) ($contact['company'] ?? ''),
                                 (string) ($contact['status'] ?? ''),
                                 (string) ($contact['position'] ?? ''),
                             ]);
+
+                            $contactAddress = implode(', ', array_filter([
+                                (string) ($contact['street'] ?? ''),
+                                trim((string) ($contact['zip_code'] ?? '') . ' ' . (string) ($contact['city'] ?? '')),
+                                (string) ($contact['country'] ?? ''),
+                            ]));
                             ?>
                     <article class="contact-item" data-contact-entry data-search-text="<?= $this->escape(strtolower($searchText)) ?>">
                         <div class="contact-item-head">
@@ -151,6 +169,9 @@ if ($extraFieldRows === []) {
                         </div>
                         <p><?= $this->escape((string) ($contact['company'] ?? '')) ?></p>
                         <p class="contact-item-meta"><?= $this->escape((string) ($contact['email'] ?? '')) ?><?= (string) ($contact['phone'] ?? '') !== '' ? ' · ' . $this->escape((string) $contact['phone']) : '' ?></p>
+                        <?php if ($contactAddress !== ''): ?>
+                            <p><?= $this->escape($contactAddress) ?></p>
+                        <?php endif; ?>
 
                         <div class="contact-item-actions">
                             <a href="/contacts/show?id=<?= $this->escape((string) ($contact['id'] ?? '')) ?>" class="secondary-link">Details</a>
@@ -181,6 +202,10 @@ if ($extraFieldRows === []) {
                     <div class="form-field"><label for="last_name">Nachname</label><input id="last_name" name="last_name" value="<?= $this->escape((string) ($currentContact['last_name'] ?? '')) ?>"></div>
                     <div class="form-field"><label for="email">E-Mail</label><input id="email" name="email" type="email" value="<?= $this->escape((string) ($currentContact['email'] ?? '')) ?>"></div>
                     <div class="form-field"><label for="phone">Telefon</label><input id="phone" name="phone" value="<?= $this->escape((string) ($currentContact['phone'] ?? '')) ?>"></div>
+                    <div class="form-field"><label for="street">Strasse</label><input id="street" name="street" value="<?= $this->escape((string) ($currentContact['street'] ?? '')) ?>" required></div>
+                    <div class="form-field"><label for="zip_code">PLZ</label><input id="zip_code" name="zip_code" value="<?= $this->escape((string) ($currentContact['zip_code'] ?? '')) ?>" required></div>
+                    <div class="form-field"><label for="city">Stadt</label><input id="city" name="city" value="<?= $this->escape((string) ($currentContact['city'] ?? '')) ?>" required></div>
+                    <div class="form-field"><label for="country">Land</label><input id="country" name="country" value="<?= $this->escape((string) ($currentContact['country'] ?? 'Deutschland')) ?>" required></div>
                     <div class="form-field">
                         <label for="company">Firma</label>
                         <select id="company" name="company" class="status-select">

@@ -409,3 +409,156 @@ if (contactSearchInput && contactSearchEntries.length > 0) {
 }
 
 makeDialogController('[data-contact-dialog]', '[data-open-contact-dialog]', '[data-close-contact-dialog]', 'data-contact-dialog-auto-open');
+
+const invoiceItemsModule = document.querySelector('[data-invoice-items-module]');
+
+if (invoiceItemsModule) {
+	const rowsContainer = invoiceItemsModule.querySelector('[data-invoice-items-rows]');
+	const addButton = invoiceItemsModule.querySelector('[data-invoice-item-add]');
+	const discountInput = document.querySelector('[data-invoice-discount]');
+	const vatInput = document.querySelector('[data-invoice-vat]');
+	const subTotalEl = document.querySelector('[data-invoice-subtotal]');
+	const discountAmountEl = document.querySelector('[data-invoice-discount-amount]');
+	const vatAmountEl = document.querySelector('[data-invoice-vat-amount]');
+	const grossTotalEl = document.querySelector('[data-invoice-gross-total]');
+
+	const parseNum = (value) => {
+		const normalized = String(value || '').replace(',', '.');
+		const numeric = Number(normalized);
+		return Number.isFinite(numeric) ? numeric : 0;
+	};
+
+	const fmt = (value) => (Math.round((value + Number.EPSILON) * 100) / 100).toFixed(2);
+
+	const createRow = () => {
+		const row = document.createElement('div');
+		row.className = 'kv-row';
+		row.setAttribute('data-invoice-item-row', '');
+		row.innerHTML = [
+			'<input type="text" name="item_description[]" placeholder="Beschreibung, z. B. Webdesign" required>',
+			'<input type="number" name="item_quantity[]" min="0.01" step="0.01" placeholder="Menge" required data-invoice-item-qty>',
+			'<input type="number" name="item_unit_price[]" min="0" step="0.01" placeholder="Einzelpreis (EUR)" required data-invoice-item-price>',
+			'<button type="button" class="kv-remove" data-invoice-item-remove>Entfernen</button>',
+		].join('');
+		return row;
+	};
+
+	const recalc = () => {
+		if (!rowsContainer) return;
+
+		let subtotal = 0;
+		rowsContainer.querySelectorAll('[data-invoice-item-row]').forEach((row) => {
+			const qtyInput = row.querySelector('[data-invoice-item-qty]');
+			const priceInput = row.querySelector('[data-invoice-item-price]');
+			const qty = parseNum(qtyInput ? qtyInput.value : '0');
+			const price = parseNum(priceInput ? priceInput.value : '0');
+			if (qty > 0 && price >= 0) {
+				subtotal += qty * price;
+			}
+		});
+
+		const discountPercent = Math.min(100, Math.max(0, parseNum(discountInput ? discountInput.value : '0')));
+		const vatPercent = Math.min(100, Math.max(0, parseNum(vatInput ? vatInput.value : '0')));
+		const discountAmount = subtotal * (discountPercent / 100);
+		const net = Math.max(0, subtotal - discountAmount);
+		const vatAmount = net * (vatPercent / 100);
+		const gross = net + vatAmount;
+
+		if (subTotalEl) subTotalEl.textContent = fmt(subtotal);
+		if (discountAmountEl) discountAmountEl.textContent = fmt(discountAmount);
+		if (vatAmountEl) vatAmountEl.textContent = fmt(vatAmount);
+		if (grossTotalEl) grossTotalEl.textContent = fmt(gross);
+	};
+
+	if (rowsContainer) {
+		rowsContainer.addEventListener('click', (event) => {
+			if (!event.target.closest('[data-invoice-item-remove]')) {
+				return;
+			}
+
+			const row = event.target.closest('[data-invoice-item-row]');
+			if (!row) {
+				return;
+			}
+
+			const allRows = rowsContainer.querySelectorAll('[data-invoice-item-row]');
+			if (allRows.length > 1) {
+				row.remove();
+			} else {
+				row.querySelectorAll('input').forEach((input) => {
+					input.value = '';
+				});
+			}
+
+			recalc();
+		});
+
+		rowsContainer.addEventListener('input', (event) => {
+			if (event.target.closest('[data-invoice-item-row]')) {
+				recalc();
+			}
+		});
+	}
+
+	if (addButton && rowsContainer) {
+		addButton.addEventListener('click', () => {
+			rowsContainer.appendChild(createRow());
+			recalc();
+		});
+	}
+
+	if (discountInput) {
+		discountInput.addEventListener('input', recalc);
+	}
+
+	if (vatInput) {
+		vatInput.addEventListener('input', recalc);
+	}
+
+	recalc();
+}
+
+// Document tabs switching
+const initDocumentTabs = () => {
+	const documentsShell = document.querySelector('[data-documents-shell]');
+	const documentsTabButtons = document.querySelectorAll('[data-documents-switch]');
+
+	if (!documentsShell || documentsTabButtons.length === 0) {
+		return;
+	}
+
+	const syncTabState = (tab) => {
+		documentsTabButtons.forEach((button) => {
+			button.classList.toggle('is-active', button.getAttribute('data-documents-switch') === tab);
+		});
+	};
+
+	const setActiveTab = (tab) => {
+		const validTabs = ['offers', 'invoices', 'reminders'];
+		const safeTab = validTabs.includes(tab) ? tab : 'offers';
+
+		document.querySelectorAll('[data-documents-view]').forEach((view) => {
+			const viewTab = view.getAttribute('data-documents-view');
+			const shouldHide = viewTab !== safeTab;
+			view.classList.toggle('is-hidden', shouldHide);
+		});
+
+		syncTabState(safeTab);
+	};
+
+	documentsTabButtons.forEach((button) => {
+		button.addEventListener('click', (e) => {
+			e.preventDefault();
+			const tabName = button.getAttribute('data-documents-switch') || 'offers';
+			setActiveTab(tabName);
+		});
+	});
+
+	setActiveTab('offers');
+};
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', initDocumentTabs);
+} else {
+	initDocumentTabs();
+}

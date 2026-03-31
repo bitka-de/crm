@@ -37,9 +37,12 @@ final class CompanyController
         $error = Session::get('company_error');
         Session::remove('company_error');
 
+        $sequenceStore = new \App\Services\NumberSequenceStore();
+
         return (new View())->render('company/index', [
             'title' => 'Unternehmensdaten',
             'profile' => $this->store->get(),
+            'sequences' => $sequenceStore->get(),
             'changeLog' => $this->changeLogStore->latest(25),
             'success' => is_string($success) ? $success : null,
             'error' => is_string($error) ? $error : null,
@@ -48,6 +51,10 @@ final class CompanyController
 
     public function update(): void
     {
+        $existingProfile = $this->store->get();
+        $sequenceStore = new \App\Services\NumberSequenceStore();
+        $sequences = $sequenceStore->get();
+
         $extraFields = $this->buildExtraFields(
             $_POST['extra_field_key'] ?? [],
             $_POST['extra_field_value'] ?? [],
@@ -73,6 +80,7 @@ final class CompanyController
             'email' => trim((string) ($_POST['email'] ?? '')),
             'phone' => trim((string) ($_POST['phone'] ?? '')),
             'website' => trim((string) ($_POST['website'] ?? '')),
+            'invoice_logo_path' => (string) ($existingProfile['invoice_logo_path'] ?? ''),
             'bank_name' => trim((string) ($_POST['bank_name'] ?? '')),
             'account_holder' => trim((string) ($_POST['account_holder'] ?? '')),
             'iban' => trim((string) ($_POST['iban'] ?? '')),
@@ -86,7 +94,24 @@ final class CompanyController
             'extra_fields' => $extraFields,
         ];
 
+        $numberSeqUpdates = $this->buildNumberSequenceUpdates($_POST, $sequences);
+        if ($numberSeqUpdates !== null) {
+            $sequenceStore->save($numberSeqUpdates);
+        }
+
         $profile = $this->normalizeByLegalForm($profile);
+
+        $logoUpload = $this->handleInvoiceLogoUpload((string) ($existingProfile['invoice_logo_path'] ?? ''));
+        if ($logoUpload['error'] !== null) {
+            Session::set('company_error', $logoUpload['error']);
+            http_response_code(302);
+            header('Location: /company');
+            exit;
+        }
+
+        if ($logoUpload['path'] !== null) {
+            $profile['invoice_logo_path'] = $logoUpload['path'];
+        }
 
         $validationError = $this->validateByLegalForm($profile);
         if ($validationError !== null) {
@@ -96,7 +121,6 @@ final class CompanyController
             exit;
         }
 
-        $existingProfile = $this->store->get();
         $changes = $this->buildChangeEntries($existingProfile, $profile);
 
         $this->store->save($profile);
@@ -349,6 +373,7 @@ final class CompanyController
             'email' => 'E-Mail',
             'phone' => 'Telefon',
             'website' => 'Webseite',
+            'invoice_logo_path' => 'Rechnungslogo',
             'bank_name' => 'Bankname',
             'account_holder' => 'Kontoinhaber',
             'iban' => 'IBAN',
@@ -370,5 +395,100 @@ final class CompanyController
         }
 
         return $key;
+    }
+
+    /**
+     * @param array<string, mixed> $post
+     * @param array<string, mixed> $currentSequences
+     * @return array<string, mixed>|null
+     */
+    private function buildNumberSequenceUpdates(array $post, array $currentSequences): ?array
+    {
+        $custPrefix = trim((string) ($post['customer_number_prefix'] ?? ''));
+        $custCurrent = trim((string) ($post['customer_number_current'] ?? ''));
+        $custPadLength = trim((string) ($post['customer_number_pad_length'] ?? ''));
+
+        if ($custPrefix === '' && $custCurrent === '' && $custPadLength === '') {
+            return null;
+        }
+
+        $sequences = $currentSequences;
+        if (!isset($sequences['customer_number'])) {
+            $sequences['customer_number'] = [];
+        }
+
+        if ($custPrefix !== '') {
+            $sequences['customer_number']['prefix'] = $custPrefix;
+        }
+
+        if ($custCurrent !== '' && is_numeric($custCurrent)) {
+            $sequences['customer_number']['current'] = (int) $custCurrent;
+        }
+
+        if ($custPadLength !== '' && is_numeric($custPadLength) && (int) $custPadLength > 0) {
+            $sequences['customer_number']['pad_length'] = (int) $custPadLength;
+        }
+
+        return $sequences;
+    }
+
+    /**
+     * @return array{path: string|null, error: string|null}
+     */
+    private function handleInvoiceLogoUpload(string $existingPath): array
+    {
+        $file = $_FILES['invoice_logo'] ?? null;
+        if (!is_array($file) || !isset($file['error']) || (int) $file['error'] === UPLOAD_ERR_NO_FILE) {
+            return ['path' => null, 'error' => null];
+        }
+
+        if ((int) $file['error'] !== UPLOAD_ERR_OK) {
+            return ['path' => null, 'error' => 'Das Rechnungslogo konnte nicht hochgeladen werden.'];
+        }
+
+        $tmpName = (string) ($file['tmp_name'] ?? '');
+        $size = (int) ($file['size'] ?? 0);
+
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+            return ['path' => null, 'error' => 'Die Logo-Datei ist ungueltig.'];
+        }
+
+        if ($size <= 0 || $size > 3 * 1024 * 1024) {
+            return ['path' => null, 'error' => 'Das Rechnungslogo darf maximal 3 MB gross sein.'];
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mimeType = (string) ($finfo->file($tmpName) ?: '');
+        $allowedMimeTypes = [
+            'image/png' => 'png',
+            'image/jpeg' => 'jpg',
+            'image/webp' => 'webp',
+        ];
+
+        if (!isset($allowedMimeTypes[$mimeType])) {
+            return ['path' => null, 'error' => 'Bitte ein Logo als PNG, JPG oder WEBP hochladen.'];
+        }
+
+        $uploadDir = __DIR__ . '/../../public/assets/uploads/company-logos';
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
+            return ['path' => null, 'error' => 'Upload-Verzeichnis fuer Logos konnte nicht erstellt werden.'];
+        }
+
+        $fileName = 'invoice-logo-' . date('YmdHis') . '-' . bin2hex(random_bytes(4)) . '.' . $allowedMimeTypes[$mimeType];
+        $targetPath = $uploadDir . '/' . $fileName;
+
+        if (!move_uploaded_file($tmpName, $targetPath)) {
+            return ['path' => null, 'error' => 'Das Rechnungslogo konnte nicht gespeichert werden.'];
+        }
+
+        $publicPath = '/assets/uploads/company-logos/' . $fileName;
+        if ($existingPath !== '' && str_starts_with($existingPath, '/assets/uploads/company-logos/')) {
+            $oldPath = __DIR__ . '/../../public' . $existingPath;
+            if (is_file($oldPath) && $oldPath !== $targetPath) {
+                @unlink($oldPath);
+            }
+        }
+
+        return ['path' => $publicPath, 'error' => null];
     }
 }

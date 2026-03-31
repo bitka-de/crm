@@ -36,6 +36,7 @@ final class CompanyPageRenderingTest extends TestCase
 
         self::assertStringContainsString('Unternehmensdaten (Deutschland)', $output);
         self::assertStringContainsString('name="company_name"', $output);
+        self::assertStringContainsString('enctype="multipart/form-data"', $output);
         self::assertStringContainsString('name="tax_number"', $output);
         self::assertStringContainsString('Gespeicherte Unternehmensdaten', $output);
         self::assertStringContainsString('name="legal_form"', $output);
@@ -50,6 +51,7 @@ final class CompanyPageRenderingTest extends TestCase
         self::assertStringContainsString('name="account_holder"', $output);
         self::assertStringContainsString('name="iban"', $output);
         self::assertStringContainsString('name="bic"', $output);
+        self::assertStringContainsString('name="invoice_logo"', $output);
         self::assertStringContainsString('Bankdaten', $output);
         self::assertStringContainsString('name="extra_field_key[]"', $output);
         self::assertStringContainsString('name="extra_field_value[]"', $output);

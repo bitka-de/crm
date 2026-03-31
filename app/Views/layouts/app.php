@@ -14,6 +14,7 @@ $navItems = [
     ['label' => 'Dashboard', 'href' => '/dashboard'],
     ['label' => 'Company', 'href' => '/company'],
     ['label' => 'Kontakte', 'href' => '/contacts'],
+    ['label' => 'Dokumente', 'href' => '/documents'],
 ];
 ?>
 <!DOCTYPE html>
@@ -53,7 +54,7 @@ $navItems = [
             </div>
         </nav>
 
-        <main class="app-main page-content">
+        <main class="page-content">
             <?= $content ?>
         </main>
     </div>

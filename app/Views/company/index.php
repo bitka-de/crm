@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 /** @var array<string, mixed> $profile */
+/** @var array<string, mixed> $sequences */
 /** @var array<int, array<string, mixed>> $changeLog */
 /** @var string|null $success */
 /** @var string|null $error */
 
 $legalForm = (string) ($profile['legal_form'] ?? 'UG (haftungsbeschraenkt)');
+$customerSeq = $sequences['customer_number'] ?? ['prefix' => 'C', 'current' => 1000, 'pad_length' => 5];
 $isEditMode = $error !== null;
 
 $extraFieldRows = [];
@@ -63,6 +65,8 @@ $bankItems = [
     'IBAN' => (string) ($profile['iban'] ?? ''),
     'BIC' => (string) ($profile['bic'] ?? ''),
 ];
+
+$invoiceLogoPath = (string) ($profile['invoice_logo_path'] ?? '');
 
 $complianceItems = [
     'USt-IdNr.' => (string) ($profile['vat_id'] ?? ''),
@@ -186,6 +190,35 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
                     <?php endforeach; ?>
                 </div>
             </section>
+
+            <?php if ($invoiceLogoPath !== ''): ?>
+                <section class="company-section-card">
+                    <header>
+                        <h3>Rechnungslogo</h3>
+                        <p>Dieses Logo wird in Rechnungs-PDFs verwendet.</p>
+                    </header>
+                    <div class="company-profile-grid">
+                        <article class="company-profile-item">
+                            <img src="<?= $this->escape($invoiceLogoPath) ?>" alt="Rechnungslogo" style="max-width: 220px; max-height: 80px; object-fit: contain; border: 1px solid #ddd; padding: 8px; background: #fff; border-radius: 8px;">
+                        </article>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <section class="company-section-card">
+                <header>
+                    <h3>Nummernkreise</h3>
+                    <p>Automatische Nummernvergabe fuer Kunden und Dokumente</p>
+                </header>
+                <div class="company-profile-grid">
+                    <article class="company-profile-item">
+                        <h4>Kundennummer</h4>
+                        <p>Präfix: <?= $this->escape((string) ($customerSeq['prefix'] ?? 'C')) ?></p>
+                        <p>Nächste Nummer: <?= (int) ($customerSeq['current'] ?? 1000) + 1 ?></p>
+                        <p>Format: <?= $this->escape((string) ($customerSeq['prefix'] ?? 'C')) ?>-<?= str_repeat('0', (int) ($customerSeq['pad_length'] ?? 5)) ?></p>
+                    </article>
+                </div>
+            </section>
         </div>
 
         <?php if ($extraFieldRows !== []): ?>
@@ -261,7 +294,7 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
         <?php endif; ?>
     </section>
 
-    <form method="post" action="/company" class="profile-form <?= $isEditMode ? '' : 'is-hidden' ?>" data-company-edit>
+    <form method="post" action="/company" enctype="multipart/form-data" class="profile-form <?= $isEditMode ? '' : 'is-hidden' ?>" data-company-edit>
         <div class="form-field legal-form-hint">
             <span class="field-label">Rechtsform</span>
             <div class="legal-form-group" role="radiogroup" aria-label="Rechtsform">
@@ -309,6 +342,14 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
             <div class="form-field" data-role="email"><label for="email">E-Mail</label><input id="email" name="email" type="email" value="<?= $this->escape((string) ($profile['email'] ?? '')) ?>"></div>
             <div class="form-field" data-role="phone"><label for="phone">Telefon</label><input id="phone" name="phone" value="<?= $this->escape((string) ($profile['phone'] ?? '')) ?>"></div>
             <div class="form-field" data-role="website"><label for="website">Webseite</label><input id="website" name="website" value="<?= $this->escape((string) ($profile['website'] ?? '')) ?>"></div>
+            <div class="form-field" data-role="invoice_logo">
+                <label for="invoice_logo">Rechnungslogo (PNG, JPG oder WEBP, max. 3 MB)</label>
+                <input id="invoice_logo" name="invoice_logo" type="file" accept="image/png,image/jpeg,image/webp">
+                <?php if ($invoiceLogoPath !== ''): ?>
+                    <small class="field-help">Aktuelles Logo:</small>
+                    <img src="<?= $this->escape($invoiceLogoPath) ?>" alt="Aktuelles Rechnungslogo" style="display: block; margin-top: 8px; max-width: 220px; max-height: 80px; object-fit: contain; border: 1px solid #ddd; padding: 8px; background: #fff; border-radius: 8px;">
+                <?php endif; ?>
+            </div>
             <div class="form-field" data-role="bank_name"><label for="bank_name">Bankname</label><input id="bank_name" name="bank_name" value="<?= $this->escape((string) ($profile['bank_name'] ?? '')) ?>"></div>
             <div class="form-field" data-role="account_holder"><label for="account_holder">Kontoinhaber</label><input id="account_holder" name="account_holder" value="<?= $this->escape((string) ($profile['account_holder'] ?? '')) ?>"></div>
             <div class="form-field" data-role="iban"><label for="iban">IBAN</label><input id="iban" name="iban" value="<?= $this->escape((string) ($profile['iban'] ?? '')) ?>"></div>
@@ -320,6 +361,25 @@ $changeLog = is_array($changeLog ?? null) ? $changeLog : [];
             <div class="form-field" data-role="share_capital_eur"><label for="share_capital_eur">Stammkapital (EUR)</label><input id="share_capital_eur" name="share_capital_eur" value="<?= $this->escape((string) ($profile['share_capital_eur'] ?? '')) ?>"></div>
             <div class="form-field" data-role="founded_on"><label for="founded_on">Gruendungsdatum</label><input id="founded_on" name="founded_on" type="date" value="<?= $this->escape((string) ($profile['founded_on'] ?? '')) ?>"></div>
         </div>
+
+        <fieldset class="form-fieldset">
+            <legend>Nummernkreise</legend>
+            <div class="profile-grid">
+                <div class="form-field" data-role="customer_number_prefix">
+                    <label for="customer_number_prefix">Praefixe fuer Kundennummer</label>
+                    <input id="customer_number_prefix" name="customer_number_prefix" value="<?= $this->escape((string) ($sequences['prefix'] ?? 'C')) ?>" required>
+                </div>
+                <div class="form-field" data-role="customer_number_current">
+                    <label for="customer_number_current">Aktueller Zaehler</label>
+                    <input id="customer_number_current" name="customer_number_current" type="number" value="<?= (int) ($sequences['current'] ?? 1000) ?>" required>
+                </div>
+                <div class="form-field" data-role="customer_number_pad_length">
+                    <label for="customer_number_pad_length">Auffuelllaenge</label>
+                    <input id="customer_number_pad_length" name="customer_number_pad_length" type="number" min="1" max="10" value="<?= (int) ($sequences['pad_length'] ?? 5) ?>" required>
+                    <small class="field-help">z.B. 5 = "-01001"</small>
+                </div>
+            </div>
+        </fieldset>
 
         <div class="form-field">
             <label>Zusatzfelder (erweiterbar)</label>

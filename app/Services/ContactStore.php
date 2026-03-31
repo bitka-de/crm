@@ -113,8 +113,13 @@ final class ContactStore
             'id' => '',
             'first_name' => '',
             'last_name' => '',
+            'customer_number' => '',
             'email' => '',
             'phone' => '',
+            'street' => '',
+            'zip_code' => '',
+            'city' => '',
+            'country' => 'Deutschland',
             'company' => '',
             'position' => '',
             'status' => 'Kontakt',
@@ -148,6 +153,10 @@ final class ContactStore
         $merged['last_name'] = trim((string) $merged['last_name']);
         $merged['email'] = trim((string) $merged['email']);
         $merged['phone'] = trim((string) $merged['phone']);
+        $merged['street'] = trim((string) $merged['street']);
+        $merged['zip_code'] = trim((string) $merged['zip_code']);
+        $merged['city'] = trim((string) $merged['city']);
+        $merged['country'] = trim((string) $merged['country']);
         $merged['company'] = trim((string) $merged['company']);
         $merged['position'] = trim((string) $merged['position']);
         $merged['status'] = trim((string) $merged['status']);

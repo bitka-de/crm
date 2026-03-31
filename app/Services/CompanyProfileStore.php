@@ -74,6 +74,7 @@ final class CompanyProfileStore
             'email' => '',
             'phone' => '',
             'website' => '',
+            'invoice_logo_path' => '',
             'bank_name' => '',
             'account_holder' => '',
             'iban' => '',

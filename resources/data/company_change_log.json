@@ -1,5 +1,70 @@
 [
     {
+        "changed_at": "2026-03-30T21:09:43+00:00",
+        "changed_by": "admin",
+        "changes": [
+            {
+                "field": "Telefon",
+                "from": "+49 30 5551234",
+                "to": "+49 721 17459908"
+            }
+        ]
+    },
+    {
+        "changed_at": "2026-03-30T15:03:49+00:00",
+        "changed_by": "admin",
+        "changes": [
+            {
+                "field": "Rechnungslogo",
+                "from": "/assets/uploads/company-logos/invoice-logo-20260330150145-d4ed1c2b.png",
+                "to": "/assets/uploads/company-logos/invoice-logo-20260330150349-1102e776.png"
+            }
+        ]
+    },
+    {
+        "changed_at": "2026-03-30T15:01:45+00:00",
+        "changed_by": "admin",
+        "changes": [
+            {
+                "field": "Rechnungslogo",
+                "from": "/assets/uploads/company-logos/invoice-logo-20260330145335-83de2142.png",
+                "to": "/assets/uploads/company-logos/invoice-logo-20260330150145-d4ed1c2b.png"
+            }
+        ]
+    },
+    {
+        "changed_at": "2026-03-30T14:53:35+00:00",
+        "changed_by": "admin",
+        "changes": [
+            {
+                "field": "Rechnungslogo",
+                "from": "",
+                "to": "/assets/uploads/company-logos/invoice-logo-20260330145335-83de2142.png"
+            }
+        ]
+    },
+    {
+        "changed_at": "2026-03-29T15:34:50+00:00",
+        "changed_by": "admin",
+        "changes": [
+            {
+                "field": "Kontoinhaber",
+                "from": "",
+                "to": "Jan Pascal Behrens"
+            },
+            {
+                "field": "BIC",
+                "from": "",
+                "to": "BIXXXXX"
+            },
+            {
+                "field": "IBAN",
+                "from": "",
+                "to": "DE52100110012100018000"
+            }
+        ]
+    },
+    {
         "changed_at": "2026-03-26T12:49:26+00:00",
         "changed_by": "admin",
         "changes": [

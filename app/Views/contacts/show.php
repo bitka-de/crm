@@ -14,6 +14,10 @@ $status   = (string) ($contact['status'] ?? '');
 $position = (string) ($contact['position'] ?? '');
 $email    = (string) ($contact['email'] ?? '');
 $phone    = (string) ($contact['phone'] ?? '');
+$street   = (string) ($contact['street'] ?? '');
+$zipCode  = (string) ($contact['zip_code'] ?? '');
+$city     = (string) ($contact['city'] ?? '');
+$country  = (string) ($contact['country'] ?? '');
 $companyName = (string) ($contact['company'] ?? '');
 
 $extraFieldRows = [];
@@ -91,6 +95,39 @@ $heroDesc = array_filter([$position, $companyName]);
                 <?php endif; ?>
                 <?php if ($email === '' && $phone === ''): ?>
                     <p class="company-log-empty">Keine Kontaktdaten eingetragen.</p>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <section class="company-section-card">
+            <header>
+                <h3>Adresse</h3>
+                <p>Rechnungs- und Postanschrift dieses Kontakts</p>
+            </header>
+            <div class="company-profile-grid">
+                <?php if ($street !== ''): ?>
+                    <div class="company-profile-item">
+                        <h4>Strasse</h4>
+                        <p><?= $this->escape($street) ?></p>
+                    </div>
+                <?php endif; ?>
+                <?php if ($zipCode !== ''): ?>
+                    <div class="company-profile-item">
+                        <h4>PLZ</h4>
+                        <p><?= $this->escape($zipCode) ?></p>
+                    </div>
+                <?php endif; ?>
+                <?php if ($city !== ''): ?>
+                    <div class="company-profile-item">
+                        <h4>Stadt</h4>
+                        <p><?= $this->escape($city) ?></p>
+                    </div>
+                <?php endif; ?>
+                <?php if ($country !== ''): ?>
+                    <div class="company-profile-item">
+                        <h4>Land</h4>
+                        <p><?= $this->escape($country) ?></p>
+                    </div>
                 <?php endif; ?>
             </div>
         </section>

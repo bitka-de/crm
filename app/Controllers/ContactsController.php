@@ -137,6 +137,19 @@ final class ContactsController
             $company = '';
         }
 
+        $street = trim((string) ($_POST['street'] ?? ''));
+        $zipCode = trim((string) ($_POST['zip_code'] ?? ''));
+        $city = trim((string) ($_POST['city'] ?? ''));
+        $country = trim((string) ($_POST['country'] ?? ''));
+
+        if ($street === '' || $zipCode === '' || $city === '' || $country === '') {
+            Session::set('contacts_error', 'Bitte fuer Kontakte eine vollstaendige Adresse mit Strasse, PLZ, Stadt und Land erfassen.');
+            Session::set('contacts_active_tab', 'contacts');
+            http_response_code(302);
+            header('Location: /contacts');
+            exit;
+        }
+
         $id = trim((string) ($_POST['id'] ?? ''));
         if ($id === '') {
             $id = $this->generateId();
@@ -148,6 +161,10 @@ final class ContactsController
             'last_name' => $lastName,
             'email' => trim((string) ($_POST['email'] ?? '')),
             'phone' => trim((string) ($_POST['phone'] ?? '')),
+            'street' => $street,
+            'zip_code' => $zipCode,
+            'city' => $city,
+            'country' => $country,
             'company' => $company,
             'position' => trim((string) ($_POST['position'] ?? '')),
             'status' => $status,

@@ -23,6 +23,11 @@ final class DashboardController
                 'hint' => 'Kontakte und Status verwalten',
             ],
             [
+                'label' => 'Dokumente',
+                'href' => '/documents',
+                'hint' => 'Angebote, Rechnungen und Mahnungen anlegen',
+            ],
+            [
                 'label' => 'Startseite',
                 'href' => '/',
                 'hint' => 'Zur Gesamtuebersicht wechseln',
@@ -41,6 +46,11 @@ final class DashboardController
                 'description' => 'Aufgaben, Faelligkeiten und Verantwortlichkeiten transparent planen.',
             ],
             [
+                'name' => 'Dokumentenmanagement',
+                'status' => 'Bereit',
+                'description' => 'Angebote, Rechnungen und Mahnungen zentral erstellen und nachverfolgen.',
+            ],
+            [
                 'name' => 'Auswertung',
                 'status' => 'Naechster Schritt',
                 'description' => 'Kennzahlen, Berichte und Export-Pipelines fuer operative Entscheidungen.',
@@ -53,8 +63,8 @@ final class DashboardController
         ];
 
         $kpis = [
-            ['label' => 'Aktive Module', 'value' => '5'],
-            ['label' => 'Erweiterbare Bereiche', 'value' => '4'],
+            ['label' => 'Aktive Module', 'value' => '6'],
+            ['label' => 'Erweiterbare Bereiche', 'value' => '5'],
             ['label' => 'Architektur', 'value' => 'MVC'],
         ];
 

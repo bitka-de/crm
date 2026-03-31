@@ -42,6 +42,10 @@ final class ContactsPageRenderingTest extends TestCase
         self::assertStringContainsString('name="first_name"', $output);
         self::assertStringContainsString('name="last_name"', $output);
         self::assertStringContainsString('name="company"', $output);
+        self::assertStringContainsString('name="street"', $output);
+        self::assertStringContainsString('name="zip_code"', $output);
+        self::assertStringContainsString('name="city"', $output);
+        self::assertStringContainsString('name="country"', $output);
         self::assertStringContainsString('name="extra_field_key[]"', $output);
         // Status dialog
         self::assertStringContainsString('name="status_name"', $output);

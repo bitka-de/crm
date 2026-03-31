@@ -19,6 +19,7 @@ final class CompanyProfileStoreTest extends TestCase
         self::assertArrayHasKey('company_name', $profile);
         self::assertArrayHasKey('tax_number', $profile);
         self::assertArrayHasKey('iban', $profile);
+        self::assertArrayHasKey('invoice_logo_path', $profile);
         self::assertSame([], $profile['extra_fields']);
     }
 
@@ -34,6 +35,7 @@ final class CompanyProfileStoreTest extends TestCase
             'account_holder' => 'Beispiel AG',
             'iban' => 'DE89370400440532013000',
             'bic' => 'COBADEFFXXX',
+            'invoice_logo_path' => '/assets/uploads/company-logos/invoice-logo.png',
             'extra_fields' => [
                 'erp' => [
                     'type' => 'text',
@@ -50,6 +52,7 @@ final class CompanyProfileStoreTest extends TestCase
         self::assertSame('Beispiel AG', $loaded['account_holder']);
         self::assertSame('DE89370400440532013000', $loaded['iban']);
         self::assertSame('COBADEFFXXX', $loaded['bic']);
+        self::assertSame('/assets/uploads/company-logos/invoice-logo.png', $loaded['invoice_logo_path']);
         self::assertSame('text', $loaded['extra_fields']['erp']['type']);
         self::assertSame('intern', $loaded['extra_fields']['erp']['value']);
 

@@ -1,0 +1,7 @@
+{
+    "customer_number": {
+        "prefix": "BIT",
+        "current": 15371,
+        "pad_length": 5
+    }
+}

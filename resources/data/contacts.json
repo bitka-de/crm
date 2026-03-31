@@ -1,10 +1,15 @@
 [
     {
-        "id": "d10cbdc88f9ba903",
+        "id": "ebb5487f6a04f96e",
         "first_name": "Maike",
         "last_name": "Kropff",
+        "customer_number": "BIT-15371",
         "email": "maike.kropff-personaltraining@outlook.de",
         "phone": "0160-98755921",
+        "street": "Bernhardistra\u00dfe 23",
+        "zip_code": "04838",
+        "city": "Eilenburg",
+        "country": "Deutschland",
         "company": "",
         "position": "",
         "status": "Kunde",

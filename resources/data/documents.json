@@ -1,0 +1,36 @@
+{
+    "offers": [],
+    "invoices": [
+        {
+            "id": "16ff0d096dbe6d68",
+            "number": "RE-20260331-103129-2b82",
+            "customer_name": "Maike Kropff",
+            "recipient_name": "Maike Kropff",
+            "recipient_street": "Bernhardistra\u00dfe 23",
+            "recipient_zip_code": "04838",
+            "recipient_city": "Eilenburg",
+            "recipient_country": "Deutschland",
+            "recipient_customer_number": "BIT-15371",
+            "line_items": [
+                {
+                    "description": "Webseite erstellt",
+                    "quantity": "1.00",
+                    "unit_price_eur": "429.00",
+                    "line_total": "429.00"
+                }
+            ],
+            "sub_total_eur": "429.00",
+            "discount_percent": "0.00",
+            "discount_amount_eur": "0.00",
+            "net_total_eur": "429.00",
+            "vat_percent": "19.00",
+            "vat_amount_eur": "81.51",
+            "gross_total_eur": "510.51",
+            "due_date": "2026-03-31",
+            "created_at": "2026-03-31 10:31",
+            "status": "Offen",
+            "notes": ""
+        }
+    ],
+    "reminders": []
+}
